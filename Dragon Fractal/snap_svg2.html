@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Curve Animation with Snap.svg</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js"></script>
+    <style>
+        #my-svg {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <svg id="my-svg"></svg>
+    </div>
+
+    <script>
+        var s = Snap("#my-svg");
+        s.attr({
+            width: "100%",
+            height: "100vh"
+        });
+
+        var animationSpeed = 800; // миллисекудны
+        var maxOrder = 10; // Уменьшите maxOrder для лучшей визуализации
+        var currentOrder = 0;
+
+        function drawDragonCurve(x, y, length, direction, order) {
+            if (order === 0) {
+                var endX = x + length * Math.cos(direction);
+                var endY = y + length * Math.sin(direction);
+                s.line(x, y, endX, endY).attr({
+                    stroke: "#009688", // Teal color
+                    strokeWidth: 2
+                });
+            } else {
+                var newLength = length / Math.sqrt(2);
+                var newDirection1 = direction - Math.PI / 4;
+                var newDirection2 = direction + Math.PI / 4;
+
+                drawDragonCurve(x, y, newLength, newDirection1, order - 1);
+
+                var endX = x + newLength * Math.cos(newDirection1);
+                var endY = y + newLength * Math.sin(newDirection1);
+
+                drawDragonCurve(endX, endY, newLength, newDirection2, order - 1);
+            }
+        }
+
+        function animateDragonCurve() {
+            if (currentOrder <= maxOrder) {
+                s.clear();
+                drawDragonCurve(700, 400, 200, 0, currentOrder); // Скорректированы начальные координаты и длина линии
+                currentOrder++;
+                setTimeout(animateDragonCurve, animationSpeed);
+            }
+        }
+
+        animateDragonCurve();
+    </script>
+</body>
+
+</html>
